@@ -1,25 +1,52 @@
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import { FaMoon, FaSearch } from "react-icons/fa";
+import Countries from "../components/countries";
 
 export default function Home() {
-  const getCountries = async () => {
-    const request = await fetch(
-      "https://restcountries.eu/rest/v2/all"
-    );
-    const data = await request.json();
+  const [countries, setCountries] = useState([]);
+  const [query, setQuery] = useState("");
+  const [option, setOption] = useState();
 
-    console.log(data);
-  };
-  getCountries();
+  // Get Data
 
-  const searchQuery = (e) => {
-    if (e.keyCode === 13) {
-      e.preventDefault();
-      console.log(
-        "congrats youve searched a query"
+  const getCountriesData = async () => {
+    try {
+      const request = await fetch(
+        `https://restcountries.eu/rest/v2/name/${query}`
       );
+      const data = await request.json();
+
+      setCountries(data);
+    } catch (err) {
+      console.log(err);
     }
   };
+
+  // Fetch data on user input query
+
+  useEffect(() => {
+    getCountriesData();
+  }, [query]);
+
+  const updateQuery = (e) => {
+    e.preventDefault();
+    setQuery(e.target.value);
+  };
+
+  // Filter Functions
+
+  const updateOption = (e) => {
+    setOption(e.target.value);
+  };
+
+  let filteredQuery = countries.filter(
+    (country) => country.region === option
+  );
+
+  console.log(filteredQuery);
+
+  //HTML
 
   return (
     <>
@@ -45,44 +72,60 @@ export default function Home() {
 
       <main className="section main-section">
         <div className="container">
-          <form
-            action=""
-            method="get"
-            className="search-box">
+          <div className="search-box">
             <input
               type="search"
-              onKeyUp={searchQuery}
               placeholder="Search for a country..."
+              value={query}
+              onChange={updateQuery}
             />
             <select
               name="country-filter"
-              className="country-filter">
-              <option
-                value="disabled"
-                disabled
-                selected>
+              className="country-filter"
+              defaultValue="default"
+              value={option}
+              onChange={updateOption}>
+              <option disabled value="default">
                 Filter by Region
               </option>
-              <option value="country">
+              <option value="Africa">
                 Africa
               </option>
-              <option value="country">
+              <option value="America">
                 America
               </option>
-              <option value="country">
-                Asia
-              </option>
-              <option value="country">
+              <option value="Asia">Asia</option>
+              <option value="Europe">
                 Europe
               </option>
-              <option value="country">
+              <option value="Oceania">
                 Oceania
               </option>
             </select>
-          </form>
-
+          </div>
           <section className="section-grid">
-            <article className="grid-col"></article>
+            {countries.map((country) => (
+              <Countries
+                url={country.name}
+                flag={country.flag}
+                name={country.name}
+                population={country.population}
+                region={country.region}
+                capital={country.capital}
+                key={country.name}
+              />
+            ))}
+            {filteredQuery.map((country) => (
+              <Countries
+                url={country.name}
+                flag={country.flag}
+                name={country.name}
+                population={country.population}
+                region={country.region}
+                capital={country.capital}
+                key={country.name}
+              />
+            ))}
           </section>
         </div>
       </main>
