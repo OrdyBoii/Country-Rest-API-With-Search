@@ -14,8 +14,15 @@ $light-weight: 300;
 $medium-weight: 600;
 $bold-weight: 800;
 
+$laptop: 1440px;
 $tablet: 768px;
 $mobile: 480px;
+
+@mixin laptop {
+  @media only screen and (max-width: $laptop) {
+    @content;
+  }
+}
 
 @mixin tablet {
   @media only screen and (max-width: $tablet) {
@@ -24,7 +31,7 @@ $mobile: 480px;
 }
 
 @mixin mobile {
-  @media only screen and (max-width: $phone) {
+  @media only screen and (max-width: $mobile) {
     @content;
   }
 }
@@ -71,6 +78,10 @@ ul {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  @include tablet {
+    font-size: 12px;
+  }
 }
 
 .toggle-mode {
@@ -81,6 +92,10 @@ ul {
   font-weight: $light-weight;
   color: $dark-blue-text;
   border-radius: 5px;
+
+  @include tablet {
+    display: none;
+  }
 
   &:hover {
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
@@ -106,6 +121,10 @@ ul {
   justify-content: space-between;
   align-items: center;
 
+  @include tablet {
+    flex-wrap: wrap;
+  }
+
   input {
     padding: 20px 20px 20px 80px;
     margin-bottom: 90px;
@@ -122,6 +141,14 @@ ul {
     background-repeat: no-repeat;
     background-size: 20px;
     transition: 0.3s ease;
+
+    @include laptop {
+      width: 60%;
+    }
+    @include tablet {
+      width: 100%;
+      margin-bottom: 40px;
+    }
 
     &:hover {
       box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
@@ -148,6 +175,11 @@ ul {
     background-position: right 0.7em top 50%, 0 0;
     background-size: 0.65em auto, 100%;
 
+    @include tablet {
+      flex-basis: 2;
+      margin-bottom: 40px;
+    }
+
     &:hover {
       box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
     }
@@ -162,6 +194,14 @@ ul {
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-rows: auto;
   gap: 100px;
+
+  @include laptop {
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+  }
+  @include tablet {
+    grid-template-columns: 1fr;
+  }
 }
 
 .grid-col {
