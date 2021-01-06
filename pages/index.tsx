@@ -1,14 +1,25 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
-import { FaMoon, FaSearch } from "react-icons/fa";
-import Countries from "../components/countries";
+import Countries from "../components/Countries";
+import Header from "../components/Header";
+import {
+  lightTheme,
+  darkTheme,
+} from "../components/Theme";
 
 export default function Home() {
   const [countries, setCountries] = useState([]);
   const [query, setQuery] = useState("");
   const [option, setOption] = useState();
+  const [theme, setTheme] = useState("light");
 
-  // Get Data
+  const toggleTheme = () => {
+    if (theme === "light") {
+      setTheme("dark");
+    } else {
+      setTheme("light");
+    }
+  };
 
   const getCountriesData = async () => {
     try {
@@ -18,23 +29,21 @@ export default function Home() {
       const data = await request.json();
 
       setCountries(data);
+      console.log(data);
     } catch (err) {
       console.log(err);
     }
   };
 
-  // Fetch data on user input query
-
   useEffect(() => {
     getCountriesData();
+    changePopulationWithCommas();
   }, [query]);
 
   const updateQuery = (e) => {
     e.preventDefault();
     setQuery(e.target.value);
   };
-
-  // Filter Functions
 
   const updateOption = (e) => {
     setOption(e.target.value);
@@ -44,12 +53,18 @@ export default function Home() {
     (country) => country.region === option
   );
 
+  const changePopulationWithCommas = () => {
+    countries.forEach((country) =>
+      country.population
+        .toString()
+        .replace(/(.)(?=(\d{3})+$)/g, "$1,")
+    );
+  };
+
   console.log(filteredQuery);
 
-  //HTML
-
   return (
-    <>
+    <main>
       <Head>
         <title>Create Next App</title>
         <meta
@@ -57,20 +72,9 @@ export default function Home() {
           content="Rest API search with theme switcher created with Next JS/React"
         />
       </Head>
+      <Header />
 
-      <header className="section header-section">
-        <div className="container header-container">
-          <h1>Where in the world?</h1>
-          <button
-            type="button"
-            className="toggle-mode">
-            <FaMoon className="toggle-icon" />
-            Dark Mode
-          </button>
-        </div>
-      </header>
-
-      <main className="section main-section">
+      <section className="section main-section">
         <div className="container">
           <div className="search-box">
             <input
@@ -103,7 +107,7 @@ export default function Home() {
               </option>
             </select>
           </div>
-          <section className="section-grid">
+          <div className="section-grid">
             {countries.map((country) => (
               <Countries
                 url={country.name}
@@ -126,9 +130,9 @@ export default function Home() {
                 key={country.name}
               />
             ))}
-          </section>
+          </div>
         </div>
-      </main>
-    </>
+      </section>
+    </main>
   );
 }
